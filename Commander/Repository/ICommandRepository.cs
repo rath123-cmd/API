@@ -1,11 +1,15 @@
-﻿using Commander.Models;
+﻿using Commander.Data;
+using Commander.Models;
 using System.Collections.Generic;
 
 namespace Commander.Repository
 {
     public interface ICommandRepository
     {
-        IEnumerable<CommandModel> GetAllAppCommands();
-        CommandModel GetCommandById(int id);
+        bool SaveChnages();
+
+        IEnumerable<Command> GetAllAppCommands();
+        Command GetCommandById(int id);
+        void AddCommand(Command command);
     }
 }

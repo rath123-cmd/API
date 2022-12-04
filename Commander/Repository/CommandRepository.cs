@@ -1,4 +1,5 @@
-﻿using Commander.Models;
+﻿using Commander.Data;
+using Commander.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,33 +9,35 @@ namespace Commander.Repository
 {
     public class CommandRepository : ICommandRepository
     {
-        public IEnumerable<CommandModel> GetAllAppCommands()
+        private readonly CommanderContext _commanderContext;
+
+        public CommandRepository(CommanderContext commanderContext)
         {
-            return GetCommands();
+            _commanderContext = commanderContext;
         }
 
-        public CommandModel GetCommandById(int id)
+        public void AddCommand(Command command)
         {
-            return GetCommands().Where(comm => comm.Id == id).FirstOrDefault();
-        }
-
-
-
-
-        public List<CommandModel> GetCommands()
-        {
-            return new List<CommandModel>()
+            if (command == null)
             {
-                new CommandModel(){ Id = 1, HowTo = "Cut a tree.", CommandLine = "cutTree", Platform = "Earth"},
-                new CommandModel(){ Id = 2, HowTo = "Cut a paper.", CommandLine = "cutPaper", Platform = "Book"},
-                new CommandModel(){ Id = 3, HowTo = "Plant a tree.", CommandLine = "plantTree", Platform = "Earth"},
-                new CommandModel(){ Id = 4, HowTo = "Cut a Patato.", CommandLine = "cutPotato", Platform = "Kitchen"},
-                new CommandModel(){ Id = 5, HowTo = "Cook a curry.", CommandLine = "cookCurry", Platform = "Kitchen"},
-                new CommandModel(){ Id = 6, HowTo = "Built a house.", CommandLine = "builtHouse", Platform = "Earth"},
-                new CommandModel(){ Id = 7, HowTo = "Do your homework.", CommandLine = "doHW", Platform = "Study"},
-                new CommandModel(){ Id = 8, HowTo = "Drink some water.", CommandLine = "drinkWater", Platform = "Life"},
-                new CommandModel(){ Id = 9, HowTo = "Eat some food.", CommandLine = "eatFood", Platform = "Life"}
-            };
+                throw new ArgumentNullException(nameof(command));
+            }
+            _commanderContext.Add(command);
+        }
+
+        public IEnumerable<Command> GetAllAppCommands()
+        {
+            return _commanderContext.Commands;
+        }
+
+        public Command GetCommandById(int id)
+        {
+            return _commanderContext.Commands.Where(comm => comm.Id == id).FirstOrDefault();
+        }
+
+        public bool SaveChnages()
+        {
+            return (_commanderContext.SaveChanges() >= 0);
         }
     }
 }
