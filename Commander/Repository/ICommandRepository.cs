@@ -11,5 +11,6 @@ namespace Commander.Repository
         IEnumerable<Command> GetAllAppCommands();
         Command GetCommandById(int id);
         void AddCommand(Command command);
+        void DeleteCommand(Command command);
     }
 }

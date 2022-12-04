@@ -2,6 +2,7 @@
 using Commander.Data;
 using Commander.Models;
 using Commander.Repository;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -54,6 +55,65 @@ namespace Commander.Controllers
             _commandRepository.SaveChnages();
 
             return _mapper.Map<CommandModel>(command);
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult UpdateCommand(int id, CommandUpdaterModel cum)
+        {
+            var toBeUpdated = _commandRepository.GetCommandById(id);
+
+            if(toBeUpdated == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(cum, toBeUpdated);
+
+            _commandRepository.SaveChnages();
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public ActionResult PartialUpdateCommand(int id, JsonPatchDocument<CommandUpdaterModel> cum)
+        {
+            var toBeUpdated = _commandRepository.GetCommandById(id);
+
+            if (toBeUpdated == null)
+            {
+                return NotFound();
+            }
+
+            var commandToPatch = _mapper.Map<CommandUpdaterModel>(toBeUpdated);
+            cum.ApplyTo(commandToPatch, ModelState);
+
+            if (!TryValidateModel(commandToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            _mapper.Map(commandToPatch, toBeUpdated);
+
+            _commandRepository.SaveChnages();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult DeleteCommand(int id)
+        {
+            var toBeUpdated = _commandRepository.GetCommandById(id);
+
+            if (toBeUpdated == null)
+            {
+                return NotFound();
+            }
+
+            _commandRepository.DeleteCommand(toBeUpdated);
+
+            _commandRepository.SaveChnages();
+
+            return NoContent();
         }
     }
 }

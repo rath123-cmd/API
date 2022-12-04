@@ -15,6 +15,8 @@ namespace Commander.Profiles
             CreateMap<Command, CommandModel>();
             CreateMap<CommandWriteModel, Command>();
             CreateMap<CommandWriteModel, CommandModel>();
+            CreateMap<CommandUpdaterModel, Command>();
+            CreateMap<Command, CommandUpdaterModel>();
         }
     }
 }

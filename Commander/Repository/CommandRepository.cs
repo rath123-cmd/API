@@ -39,5 +39,14 @@ namespace Commander.Repository
         {
             return (_commanderContext.SaveChanges() >= 0);
         }
+
+        public void DeleteCommand(Command command)
+        {
+            if (command == null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
+            _commanderContext.Remove(command);
+        }
     }
 }
